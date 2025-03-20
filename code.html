@@ -17,4 +17,46 @@
     </main>
     <script src="script.js"></script>
 </body>
+    <h1>Gestion des données</h1>
+    
+    <form id="dataForm">
+        <input type="text" id="name" placeholder="Nom" required>
+        <button type="submit">Ajouter</button>
+    </form>
+    
+    <h2>Liste des données</h2>
+    <ul id="dataList"></ul>
+    
+    <script>
+        document.getElementById('dataForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            let name = document.getElementById('name').value;
+            if (!name) return;
+            
+            await fetch('http://localhost:5000/api/data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+            
+            document.getElementById('name').value = '';
+            loadData();
+        });
+        
+        async function loadData() {
+            let response = await fetch('http://localhost:5000/api/data');
+            let data = await response.json();
+            
+            let list = document.getElementById('dataList');
+            list.innerHTML = '';
+            data.forEach(item => {
+                let li = document.createElement('li');
+                li.textContent = item.name;
+                list.appendChild(li);
+            });
+        }
+        
+        loadData();
+    </script>
+
 </html>
